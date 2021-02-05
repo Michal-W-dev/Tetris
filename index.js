@@ -12,9 +12,19 @@ const rules = document.querySelector('.rules')
 const summonContainer = document.querySelector('.summon')
 const dispSummon = document.querySelector('.summon span')
 const dispDestroy = document.querySelector('.destroy span')
-const startBtn = document.querySelector('.start-btn')
 const dispLevel = [...document.querySelectorAll('.level span + span')]
 const dispExtra = [...document.querySelectorAll('.level-extra')]
+
+// Buttons
+const startBtn = document.querySelector('.start-btn')
+const leftBtn = document.querySelector('.left-btn')
+const rightBtn = document.querySelector('.right-btn')
+const upBtn = document.querySelector('.up-btn')
+const downBtn = document.querySelector('.down-btn')
+const summBtn = document.querySelector('.summon-btn')
+const destBtn = document.querySelector('.destroy-btn')
+const rotateBtn = document.querySelector('.rotate-btn')
+
 
 let gameSpeed, speed, isGameOver, score, level, levelScore, squares;
 let timerId, pause, isLeveledUp, summonLong, destroyRow;
@@ -40,7 +50,7 @@ function initial() {
     score = 0;
     // ANCHOR summon 0
     summonLong = 0;
-    destroyRow = 1
+    destroyRow = 2;
     dispDestroy.textContent = destroyRow;
     level = 1;
     // ANCHOR level Score 20 at least
@@ -206,7 +216,8 @@ function addScore() {
             innerScore += 10
             const squaresRemoved = squares.splice(i, width)
             squares.splice(0, 0, ...squaresRemoved)
-            grid.prepend(...squaresRemoved)       
+            grid.prepend(...squaresRemoved)
+            // squares.forEach(cell => grid.appendChild(cell));          
         }
     }
     msg.style.color = 'DarkCyan'
@@ -276,7 +287,7 @@ function levelUp() {
         if (level % 2 === 0) {
             // 10% to summon +1
             let rand = Math.random()
-            if (rand < 0.1) {
+            if (rand < 0.05) {
                 summonLong++
                 dispExtra[0].classList.remove('hidden')
             } else if (rand > 0.5) {
@@ -500,21 +511,44 @@ document.addEventListener('keydown', (evt) => {
         else if (evt.key === 'ArrowRight') moveRight();
         else if (evt.key === 'ArrowDown') speedUp();
         else if (evt.key === 'ArrowUp') slowDown();
-        else if (evt.key === 'r') rotate();
+        else if (evt.key === 'f') rotate();
     }
     if (!isLeveledUp) {
         if (evt.key === 'p') { startPauseRestart(); }
     }
     // if (!pause && summonLong > 0) {
     if (summonLong > 0) {
-        if (evt.key === 'q') {
+        if (evt.key === 's') {
             summonLongShape()
         }
     }
     if (destroyRow > 0) {
-        if (evt.key === 'w') {
+        if (evt.key === 'd') {
             destroyLastRow()
         }
     }
     draw()
+})
+
+// BUTTONS mobile
+leftBtn.addEventListener('click', () => { if (!pause) { undraw(); moveLeft(); draw() } })
+rightBtn.addEventListener('click', () => { if (!pause) { undraw(); moveRight(); draw() } })
+upBtn.addEventListener('click', () => { if (!pause) { undraw(); slowDown(); draw() } })
+downBtn.addEventListener('click', () => { if (!pause) { undraw(); speedUp(); draw() } })
+rotateBtn.addEventListener('click', () => { if (!pause) { undraw(); rotate(); draw() } })
+
+summBtn.addEventListener('click', () => {
+    if (summonLong > 0) {
+        undraw();
+        summonLongShape();
+        draw();
+    }
+})
+
+destBtn.addEventListener('click', () => {
+    if (destroyRow > 0) {
+        undraw();
+        destroyLastRow();
+        draw();
+    }
 })
