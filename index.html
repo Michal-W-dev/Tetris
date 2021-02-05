@@ -3,8 +3,11 @@
 
 <head>
     <meta charset="utf-8">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
     <title>// Tetris</title>
     <link rel="stylesheet" href="style.css" />
+    <!-- <link rel="shortcut icon" href="icons/favicon.ico" type="image/x-icon"> -->
 </head>
 
 <body>
@@ -41,9 +44,9 @@
                     <p><span>DOWN</span> - speed up (2 steps)</p>
                     <p><span>UP</span> - slow down (1 step)</p>
                     <p><span>P</span> - pause</p>
-                    <p><span>R</span> - rotate</p>
-                    <p><span>Q</span> - summon Long Shape</p>
-                    <p><span>W</span> - destroy Last Row</p>
+                    <p><span>F</span> - rotate</p>
+                    <p><span>S</span> - summon Long Shape</p>
+                    <p><span>D</span> - destroy Last Row</p>
 
                     <p class="topic">POINTS</p>
                     <p><span>1 row</span> - 10 pts</p>
@@ -100,6 +103,21 @@
                 </div>
             </div>
             <button class="start-btn">Start</button>
+        </div>
+    </div>
+    <div class="mobile">
+        <div class="mobile-first-row">
+            <button class="left-btn"><i class="fas fa-caret-left"></i></button>
+            <button class="right-btn"><i class="fas fa-caret-right"></i></button>
+            <div>
+                <button class="up-btn"><i class="fas fa-caret-up"></i></button>
+                <button class="down-btn"><i class="fas fa-caret-down"></i></button>
+            </div>
+            <button class="rotate-btn">F</button>
+        </div>
+        <div class="mobile-second-row">
+            <button class="summon-btn">S</button>
+            <button class="destroy-btn">D</button>
         </div>
     </div>
 
