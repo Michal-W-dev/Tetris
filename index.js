@@ -27,10 +27,8 @@ const rotateBtn = document.querySelector('.rotate-btn')
 
 
 let gameSpeed, speed, isGameOver, score, level, levelScore, squares;
-let timerId, pause, isLeveledUp, summonLong, destroyRow;
+let timerId, pause, isLeveledUp, summonLong, destroyRow, topScore;
 let rulesScreen = true;
-
-let topScore = JSON.parse(window.localStorage.getItem('topScore') || '0')
 
 const gridNum = 200;
 const width = 10;
@@ -64,6 +62,7 @@ function initial() {
     dispLevelScore.textContent = levelScore;
     dispPlayerSpeed.textContent = parseInt(12000 / gameSpeed);
     dispGameSpeed.textContent = parseInt(12000 / gameSpeed);
+    topScore = JSON.parse(window.localStorage.getItem('topScore') || '0')
     dispTopScore.textContent = topScore;
 }
 initial()
