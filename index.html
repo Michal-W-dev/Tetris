@@ -5,8 +5,10 @@
     <meta charset="utf-8">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Tetris</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="mobile.css" />
     <link rel="shortcut icon" href="assets/tetris.png" type="png">
 </head>
 
@@ -104,9 +106,28 @@
             </div>
             <button class="start-btn">Start</button>
         </div>
+
+    </div>
+    <div class="mobile hidden">
+        <button class="set-btns-position">Change buttons position</button>
+        <div class="reset-btns-group">
+            Reset buttons position
+            <button class="reset-btns-left"></button>
+            <button class="reset-btns-right"></button>
+        </div>
+        <div class="control-btns">
+            <button class="left-btn"><i class="fas fa-caret-left"></i></button>
+            <button class="right-btn"><i class="fas fa-caret-right"></i></button>
+            <button class="up-btn"><i class="fas fa-caret-up"></i></button>
+            <button class="down-btn"><i class="fas fa-caret-down"></i></button>
+            <button class="rotate-btn">Rotate</button>
+            <button class="summon-btn">S</button>
+            <button class="destroy-btn">Destroy</button>
+        </div>
     </div>
 
     <script src="index.js"></script>
+    <script src="mobile.js"></script>
 </body>
 
 </html>

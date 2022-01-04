@@ -34,18 +34,20 @@ const miniGridSquares = [...document.querySelectorAll('.mini-grid div')]
 
 sideAnim.forEach(sideAnim => (sideAnim.style.animation = 'rules forwards 2s'))
 
+
+// Starting values for the game & reset values for restart.
 function initial() {
     isGameOver = false;
-    // ANCHOR speed - 310
+    // Starting game speed (310 - 330)
     gameSpeed = 320;
     speed = gameSpeed;
     score = 0;
-    // ANCHOR summon 0
+    // Starting abilities:
     summonLong = 0;
     destroyRow = 2;
     dispDestroy.textContent = destroyRow;
     level = 1;
-    // ANCHOR level Score 20 at least
+    // First level up at score 20 (20 - 30)
     levelScore = 20;
     grid.innerHTML = Array(gridNum).fill(`<div class='sq'></div>`).join('');
     grid.innerHTML += Array(width).fill(`<div class='taken'></div>`).join('');
@@ -345,7 +347,6 @@ function gameOver() {
     }
 }
 
-
 function freeze() {
     let isTaken = curTetro[randRot].some(shape => squares[curPos + shape + width].classList.contains('taken'));
     if (isTaken) {
@@ -509,7 +510,6 @@ document.addEventListener('keydown', (evt) => {
     if (!isLeveledUp) {
         if (evt.key === 'p') { startPauseRestart(); }
     }
-    // if (!pause && summonLong > 0) {
     if (summonLong > 0) {
         if (evt.key === 's') {
             summonLongShape()
