@@ -15,26 +15,20 @@ const dispDestroy = document.querySelector('.destroy span')
 const dispLevel = [...document.querySelectorAll('.level span + span')]
 const dispExtra = [...document.querySelectorAll('.level-extra')]
 
-// Buttons
 const startBtn = document.querySelector('.start-btn')
-const leftBtn = document.querySelector('.left-btn')
-const rightBtn = document.querySelector('.right-btn')
-const upBtn = document.querySelector('.up-btn')
-const downBtn = document.querySelector('.down-btn')
-const summBtn = document.querySelector('.summon-btn')
-const destBtn = document.querySelector('.destroy-btn')
-const rotateBtn = document.querySelector('.rotate-btn')
 
 
 let gameSpeed, speed, isGameOver, score, level, levelScore, squares;
 let timerId, pause, isLeveledUp, summonLong, destroyRow, topScore;
 let rulesScreen = true;
 
-const gridNum = 200;
-const width = 10;
-const miniGridNum = 25;
-const miniWidth = 5;
+// Grid                 /number of squares [total, at width]
+const [gridNum, width] = [200, 10]
 
+// Mini Grid            /small grid for a future figure
+const [miniGridNum, miniWidth] = [25, 5]
+
+// Fill mini grid with divs
 miniGrid.innerHTML = Array(miniGridNum).fill(`<div class='sq'></div>`).join('');
 const miniGridSquares = [...document.querySelectorAll('.mini-grid div')]
 
@@ -152,9 +146,10 @@ const nextTetros = [
     // [2, 12, 22, 32, 42] - iLongTetro 
     [1 - miniWidth, 1, miniWidth + 1, 2 * miniWidth + 1, 3 * miniWidth + 1]
 ]
-// Color pallete: 0 - 360
+// Hsl color palette for tetros: 0 - 360
 const colors = ['10', '35', '120', '210', '260', '280', '310', '330', '350']
 
+// Create random tetros (starting position, current tetro, next tetro)
 let curPos = 4;
 let randTetro = Math.floor(Math.random() * (tetros.length - 1))
 let randRot = Math.floor(Math.random() * 4)
@@ -162,14 +157,16 @@ let randNextTetro = Math.floor(Math.random() * (nextTetros.length - 1))
 let colorTaken = randTetro;
 drawMini()
 
+// Color current tetro, depending on hsl color palette
 let curTetro = tetros[randTetro]
 document.body.style.setProperty('--color-main', colors[randTetro]);
 colors.forEach((color, i) => document.body.style.setProperty(`--color-shape-${i}`, color))
 
-
+// Functions: draw, drawMini - ADD color class to squares, to draw a tetro
 function draw() {
     curTetro[randRot].forEach(shape => { if (squares[curPos + shape]) squares[curPos + shape].classList.add('active') })
 }
+
 function drawMini() {
     nextTetros[randNextTetro].forEach(shape => {
         if (miniGridSquares[1 + miniWidth + shape]) miniGridSquares[1 + miniWidth + shape].classList.add('active');
@@ -177,9 +174,11 @@ function drawMini() {
     document.body.style.setProperty('--color-mini', colors[randNextTetro]);
 }
 
+// Functions: draw, drawMini - REMOVE color class to squares, to draw a tetro
 function undraw() {
     curTetro[randRot].forEach(shape => { if (squares[curPos + shape]) squares[curPos + shape].classList.remove('active') })
 }
+
 function undrawMini() {
     nextTetros[randNextTetro].forEach(shape => {
         if (miniGridSquares[1 + miniWidth + shape]) miniGridSquares[1 + miniWidth + shape].classList.remove('active')
@@ -256,19 +255,16 @@ function addScore() {
 }
 
 function randomSquaresAtLevelUp() {
+    // At each level squares can appear higher
     let levelHeight = level + 1;
-    // top levelHeight where can appear random squares
-    if (levelHeight > 12) { levelHeight = 12 }
-    // console.log(levelHeight);
+    // Top level height where random squares can appear
+    if (levelHeight > 12) levelHeight = 12;
     let randFrom = gridNum - (levelHeight * width)
-    let randomSq1 = Math.floor(Math.random() * levelHeight * width)
-    let randomSq2 = Math.floor(Math.random() * levelHeight * width)
-    let randomSq3 = Math.floor(Math.random() * levelHeight * width)
-    let randomSq4 = Math.floor(Math.random() * levelHeight * width)
-    let randomSq5 = Math.floor(Math.random() * levelHeight * width)
-    const randSqLevelUp = [randomSq1, randomSq2, randomSq3, randomSq4, randomSq5]
-    // console.log(randSqLevelUp);
-    randSqLevelUp.forEach(randSq => {
+
+    const createRandSquareNum = () => Math.floor(Math.random() * levelHeight * width)
+    // Array with random squares
+    const randSquaresAtLevelUp = Array(5).fill().map(_ => createRandSquareNum())
+    randSquaresAtLevelUp.forEach(randSq => {
         if (!squares[randSq + randFrom].classList.contains('taken')) {
             squares[randSq + randFrom].classList.add('taken', 'b1')
         }
@@ -282,10 +278,10 @@ function levelUp() {
         level += 1;
         dispLevelScore.textContent = levelScore;
         dispLevel.forEach(level => level.textContent = +level.textContent + 1)
-        // ANCHOR summon - after each level
+        // Gain extra abilities after each 2 levels
         if (level % 2 === 0) {
             // 5% to summon +1
-            let rand = Math.random()
+            const rand = Math.random()
             if (rand < 0.05) {
                 summonLong++
                 dispExtra[0].classList.remove('hidden')
@@ -442,7 +438,6 @@ function moveRight() {
 
 function rotate() {
     let nextRotate = (randRot < 3) ? randRot + 1 : 0;
-    // console.log(nextRotate);
     let canRotate = curTetro[nextRotate].some(shape => {
         if (squares[curPos + shape].classList.contains('taken')) { return true }
         // can rotate left (check wall)
@@ -473,7 +468,7 @@ function summonLongShape() {
         summonLong--
         dispSummon.textContent = summonLong
         let rand = Math.random()
-        if (rand > 0.05) {
+        if (rand > 0.1) {
             undrawMini()
             randNextTetro = nextTetros.length - 1
             drawMini()
@@ -496,7 +491,6 @@ function destroyLastRow() {
         squares[i].className = 'sq'
     }
     const squaresDestroyed = squares.splice(lastRow, width)  // 190, 10
-    console.log(squaresDestroyed);
     squares.splice(0, 0, ...squaresDestroyed)
     grid.prepend(...squaresDestroyed)
     msg.parentNode.style.backgroundColor = 'hsl(150, 100%, 94%)'
@@ -528,27 +522,3 @@ document.addEventListener('keydown', (evt) => {
     }
     draw()
 })
-
-// ------------------ FUTURE DEVELOPMENT ------------------ //
-// BUTTONS mobile 
-// leftBtn.addEventListener('click', () => { if (!pause) { undraw(); moveLeft(); draw() } })
-// rightBtn.addEventListener('click', () => { if (!pause) { undraw(); moveRight(); draw() } })
-// upBtn.addEventListener('click', () => { if (!pause) { undraw(); slowDown(); draw() } })
-// downBtn.addEventListener('click', () => { if (!pause) { undraw(); speedUp(); draw() } })
-// rotateBtn.addEventListener('click', () => { if (!pause) { undraw(); rotate(); draw() } })
-
-// summBtn.addEventListener('click', () => {
-//     if (summonLong > 0) {
-//         undraw();
-//         summonLongShape();
-//         draw();
-//     }
-// })
-
-// destBtn.addEventListener('click', () => {
-//     if (destroyRow > 0) {
-//         undraw();
-//         destroyLastRow();
-//         draw();
-//     }
-// })
