@@ -6,10 +6,29 @@
   z-index: 9;
 }
 
+.motion-control-btn {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  right: 1rem;
+  top: 1rem;
+  z-index: 5;
+  height: 4.9rem;
+}
+.motion-control-btn span {
+  padding: 0 1.55rem;
+  font-size: 2.5rem;
+  color: rgb(136, 255, 0);
+}
+
+.motion-off {
+  color: deeppink;
+}
+
 .set-btns-position {
   position: absolute;
   right: 1rem;
-  top: 5rem;
+  top: 7.6rem;
   z-index: 5;
   height: 5rem;
 }
@@ -26,7 +45,7 @@
   font-size: 1.8rem;
   background: rgba(19, 13, 13, 0.9);
   color: rgb(255, 255, 255, 0.85);
-  padding: 0.3rem 3.5rem;
+  padding: 0.6rem 4.2rem;
   border-radius: 1rem;
   outline: none;
   border: 2px solid darkslateblue;
@@ -93,7 +112,7 @@
   content: '';
   height: 100%;
   width: 100%;
-  border: 2px dotted white;
+  border: 2px dashed white;
   opacity: 0.2;
   border-radius: 10px;
   animation: pulsingBorder 2.7s infinite;
@@ -106,7 +125,7 @@
   content: '';
   height: 100%;
   width: 100%;
-  border: 2px dotted white;
+  border: 2px dashed white;
   opacity: 0.2;
   border-radius: 10px;
   animation: pulsingBorder 2.7s infinite;
@@ -117,6 +136,11 @@
   left: 1rem;
   top: 4rem;
   z-index: 5;
+}
+
+.green-btn {
+  color: rgba(136, 255, 0, .9);
+  border: 2px dashed rgba(136, 255, 0, .7);
 }
 
 .hidden {
@@ -152,7 +176,8 @@
     z-index: 99;
   }
   button,
-  .reset-btns-group {
+  .reset-btns-group,
+  .motion-control-btn {
     display: none;
   }
 }

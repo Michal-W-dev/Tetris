@@ -3,6 +3,7 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod/i.test(navigator.userAgent)
 if (isMobile) {
 
   // Select individual buttons
+  const motionControlBtn = document.querySelector('.motion-control-btn')
   const changePosBtn = document.querySelector('.set-btns-position')
   const resetPosBtnContainer = document.querySelector('.reset-btns-group')
   const resetPosBtnLeft = document.querySelector('.reset-btns-left')
@@ -18,9 +19,10 @@ if (isMobile) {
   // Select all buttons
   const btns = document.querySelectorAll('.control-btns button')
 
-  document.querySelector('.rightScreen h1').classList.add('hidden')
 
-  // Show btns
+  // ---- Starting setup for mobile ----
+  startBtn.classList.add('green-btn')
+  document.querySelector('.rightScreen h1').classList.add('hidden')
   document.querySelector('.mobile').classList.remove('hidden')
 
 
@@ -66,8 +68,8 @@ if (isMobile) {
 
 
   // (Draw / undraw) tetros using buttons
-  const drawMobile = useBtn => {
-    if (!pause) { undraw(); useBtn(); draw(); }
+  const drawMobile = moveTo => {
+    if (!pause) { undraw(); moveTo(); draw(); }
   }
 
   // Buttons control
@@ -77,7 +79,6 @@ if (isMobile) {
   downBtn.addEventListener('click', () => drawMobile(speedUp))
   rotateBtn.addEventListener('click', () => drawMobile(rotate))
 
-
   summBtn.addEventListener('click', () => {
     if (summonLong > 0) { undraw(); summonLongShape(); draw(); }
   })
@@ -86,9 +87,68 @@ if (isMobile) {
     if (destroyRow > 0) { undraw(); destroyLastRow(); draw(); }
   })
 
+  // ---- Motion control ----
+  let isMotionOn = true;
+  motionControlBtn.addEventListener('click', () => {
+    const span = motionControlBtn.firstElementChild
+    isMotionOn = !isMotionOn;
+    if (!isMotionOn) {
+      span.textContent = 'OFF';
+      span.style.color = 'deeppink';
+    } else {
+      span.textContent = 'ON';
+      span.style.color = 'rgb(136, 255, 0)';
+    }
+  })
+
+  const allowMotionControl = (isMotionTurnOn) => {
+    if (isMotionTurnOn) {
+      let locked = false;
+      let clearIntervalId;
+
+      const resetMotion = () => clearInterval(clearIntervalId)
+      const startMotion = (moveTo, time) => { clearIntervalId = setInterval(() => { drawMobile(moveTo) }, time) }
+
+      const createMotion = (moveTo, time) => {
+        // lockName - individual for each speed & movement (e.g. moveLeft250)
+        const lockName = moveTo.name + time
+        if (locked !== lockName) {
+          if (clearIntervalId) { locked = false; resetMotion(); }
+          startMotion(moveTo, time)
+          locked = lockName;
+        }
+      }
+
+      const isInRange = (beta, ...degreeRange) => {
+        const lowDegree = Math.min(...degreeRange)
+        const highDegree = Math.max(...degreeRange)
+        return beta >= lowDegree && beta <= highDegree
+      }
+
+      window.addEventListener('deviceorientation', e => {
+        const b = e.beta
+        if (isInRange(b, -3, 3)) { locked = false; resetMotion(); }
+        else if (isInRange(b, -4, -10)) createMotion(moveLeft, 700)
+        else if (isInRange(b, 4, 10)) createMotion(moveRight, 700)
+        else if (isInRange(b, -11, -20)) createMotion(moveLeft, 300)
+        else if (isInRange(b, 11, 20)) createMotion(moveRight, 300)
+        else if (isInRange(b, -21, -90)) createMotion(moveLeft, 100)
+        else if (isInRange(b, 21, 90)) createMotion(moveRight, 100)
+      })
+    }
+  }
+
   // Double button - reset position of buttons to 2 default settings
   resetPosBtnLeft.addEventListener('click', () => setDefaultBtnsPosition(basePxBtnLeft))
   resetPosBtnRight.addEventListener('click', () => setDefaultBtnsPosition(basePxBtnRight))
+
+
+  // Create functions that allow hide or show multiple DOM elements
+  const createClassListFn = (whatDoWidthHiddenClass) => (...domElements) => {
+    domElements.forEach(el => el.classList[whatDoWidthHiddenClass]('hidden'))
+  }
+  const hide = createClassListFn('add')
+  const show = createClassListFn('remove')
 
 
   // ---- Changing buttons location ----
@@ -101,8 +161,7 @@ if (isMobile) {
       // Allow user to change buttons positions. User can start the game, already when changes are confirmed
       changePosBtn.textContent = 'Confirm changes';
       btns.forEach(btn => btn.classList.add('pulsing-animation'));
-      resetPosBtnContainer.classList.add('hidden')
-      startBtn.classList.add('hidden')
+      hide(resetPosBtnContainer, startBtn, motionControlBtn)
     }
     else {
       // When changes confirmed, remove animation & show 'changes position buttons'.
@@ -111,8 +170,7 @@ if (isMobile) {
         btn.classList.remove('pulsing-animation');
         btn.style.color = 'white';
       })
-      resetPosBtnContainer.classList.remove('hidden')
-      startBtn.classList.remove('hidden')
+      show(resetPosBtnContainer, startBtn, motionControlBtn)
       clickedBtn = null
     }
   })
@@ -141,14 +199,15 @@ if (isMobile) {
   // Remove "change positions buttons", clean EventListeners, save buttons positions (set by player) to localStorage.
   startBtn.addEventListener('click', () => {
     if (!allowToChangePosition && !changePosBtn.classList.contains('hidden')) {
-      changePosBtn.classList.add('hidden')
-      resetPosBtnContainer.classList.add('hidden')
+      hide(changePosBtn, resetPosBtnContainer, motionControlBtn)
+      startBtn.classList.remove('green-btn')
       btns.forEach(btn => btn.removeEventListener('click', selectBtns))
       document.removeEventListener('click', changeBtnPosition)
       const btnsPosition = [...btns].map(btn => (
         { left: btn.style.left, right: btn.style.right, bottom: btn.style.bottom }
       ))
       window.localStorage.setItem('btnsPosition', JSON.stringify(btnsPosition))
+      allowMotionControl(isMotionOn)
     }
   })
 
